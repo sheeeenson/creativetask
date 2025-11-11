@@ -33,7 +33,7 @@
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center min-h-screen"> <!-- АДАПТИВНЫЕ ОТСТУПЫ p-4 и md:p-8 -->
 
-    <h1 class="text-xl md:text-3xl font-extrabold text-gray-800 mb-6 text-center">Генератор Заданий для TG (Минимализм)</h1>
+    <h1 class="text-xl md:text-3xl font-extrabold text-gray-800 mb-6 text-center">Генератор креативных заданий</h1>
 
     <!-- 1. ПАНЕЛЬ УПРАВЛЕНИЯ -->
     <div class="w-full max-w-xl bg-white p-6 rounded-xl shadow-lg mb-8">
@@ -42,11 +42,11 @@
         <label for="taskIdInput" class="block text-lg font-medium text-gray-700 mb-2">Номер задания (слева вверху):</label>
         <input type="text" id="taskIdInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="(07)" placeholder="(XX)" />
         
-        <label for="channelHandle" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Название/Хэштег (справа вверху):</label>
+        <label for="channelHandle" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Название (справа вверху):</label>
         <input type="text" id="channelHandle" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="ПРИВЕТ!" placeholder="Например: BRAND NAME" />
         
         <!-- НОВОЕ ПОЛЕ: Задание (нижняя табличная строка) -->
-        <label for="taskDescriptionInput" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Описание ЗАДАНИЯ (нижняя табличная строка):</label>
+        <label for="taskDescriptionInput" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Описание задания (нижняя табличная строка):</label>
         <textarea id="taskDescriptionInput" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" placeholder="Придумать новое блюдо из трех ингредиентов"></textarea>
 
         <!-- НОВОЕ ПОЛЕ: Канал (левый нижний угол) -->
@@ -63,21 +63,21 @@
         <input type="hidden" id="ctaInput" value="" />
 
         <!-- НАСТРОЙКА ИЗОБРАЖЕНИЯ -->
-        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Центрального Изображения</h3>
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка изображения</h3>
 
-        <label class="block text-md font-medium text-gray-700 mt-4 mb-2">Загрузите изображение предмета (в центре):</label>
+        <label class="block text-md font-medium text-gray-700 mt-4 mb-2">Загрузите изображение (в центре):</label>
         <input type="file" id="backgroundImage" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-gray-50" />
         
         <!-- КНОПКА УДАЛЕНИЯ ЦЕНТРАЛЬНОГО ИЗОБРАЖЕНИЯ -->
         <div class="flex mt-2">
             <button id="removeBackgroundImageButton" class="w-full px-3 py-2 text-sm bg-red-100 text-red-700 font-medium rounded-lg hover:bg-red-200 transition duration-300 ease-in-out">
-                Удалить изображение предмета
+                Удалить изображение
             </button>
         </div>
 
 
         <!-- НАСТРОЙКА ФОНА КАРТОЧКИ -->
-        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Фона Карточки</h3>
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка фона </h3>
 
         <label for="backgroundColorInput" class="block text-md font-medium text-gray-700 mt-4 mb-2">Цвет фона:</label>
         <input type="color" id="backgroundColorInput" class="w-full h-12 p-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="#FFFFFF" />
@@ -93,7 +93,7 @@
         </div>
 
         <!-- НОВЫЙ РАЗДЕЛ: НАСТРОЙКА ЦВЕТА ШРИФТА -->
-        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Цвета Шрифта</h3>
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка цвета шрифта</h3>
 
         <label for="mainTextColorInput" class="block text-md font-medium text-gray-700 mt-4 mb-2">Цвет основного текста (ID, Задание, Описание, Рамки):</label>
         <input type="color" id="mainTextColorInput" class="w-full h-12 p-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="#000000" />
@@ -106,7 +106,7 @@
         <!-- Кнопка "Скачать" занимает всю ширину -->
         <div class="flex mt-6">
             <button id="saveButton" class="w-full px-4 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out" disabled>
-                Скачать Изображение (.png)
+                Скачать изображение (.png)
             </button>
         </div>
         <p id="statusMessage" class="text-sm text-center mt-4 text-red-600 hidden">Задание не может быть пустым!</p>
