@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Заданий (Минимализм)</title>
+    <!-- Загрузка Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Загрузка шрифта Inter -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; 
+        }
+        /* Убираем тени, которые не подходят минималистичному дизайну */
+        .text-shadow {
+            text-shadow: none;
+        }
+        /* Убираем жесткую привязку к белому цвету в CSS, чтобы фон можно было менять через JS */
+        #creativeCard {
+            background-color: white; /* Начальное значение */
+            background-image: none; 
+            color: #000000; /* Черный текст по умолчанию, будет переопределен JS */
+        }
+        /* Сброс цвета текста для футера, чтобы JS мог установить его */
+        #footerChannelOutput, #footerCTAOutput {
+            color: #6B7280; /* Начальное значение, будет переопределено JS */
+        }
+    </style>
+    <!-- Загрузка html2canvas для сохранения изображения -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
+
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Генератор Заданий для TG (Минимализм)</h1>
+
+    <!-- 1. ПАНЕЛЬ УПРАВЛЕНИЯ -->
+    <div class="w-full max-w-xl bg-white p-6 rounded-xl shadow-lg mb-8">
+        
+        <!-- Верхний заголовок: ID/Номер задания и Название -->
+        <label for="taskIdInput" class="block text-lg font-medium text-gray-700 mb-2">Номер задания (слева вверху):</label>
+        <input type="text" id="taskIdInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="(07)" placeholder="(XX)" />
+        
+        <label for="channelHandle" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Название/Хэштег (справа вверху):</label>
+        <input type="text" id="channelHandle" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="ПРИВЕТ!" placeholder="Например: BRAND NAME" />
+        
+        <!-- НОВОЕ ПОЛЕ: Задание (нижняя табличная строка) -->
+        <label for="taskDescriptionInput" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Описание ЗАДАНИЯ (нижняя табличная строка):</label>
+        <textarea id="taskDescriptionInput" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" placeholder="Придумать новое блюдо из трех ингредиентов"></textarea>
+
+        <!-- НОВОЕ ПОЛЕ: Канал (левый нижний угол) -->
+        <label for="footerChannelInput" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Название канала (левый нижний угол):</label>
+        <input type="text" id="footerChannelInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="тг: креативная кухня" placeholder="ТГ: КРЕАТИВНАЯ КУХНЯ" />
+
+        <!-- НОВОЕ ПОЛЕ: CTA (правый нижний угол) -->
+        <label for="footerCTAInput" class="block text-lg font-medium text-gray-700 mt-4 mb-2">Призыв к действию / CTA (правый нижний угол):</label>
+        <input type="text" id="footerCTAInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900" value="Приготовьте что-нибудь нестандартное." placeholder="Приготовьте что-нибудь нестандартное." />
+
+        <!-- Поля, которые теперь не используются в этом дизайне -->
+        <input type="hidden" id="taskInput" value="" />
+        <input type="hidden" id="cardTitleInput" value="" />
+        <input type="hidden" id="ctaInput" value="" />
+
+        <!-- НАСТРОЙКА ИЗОБРАЖЕНИЯ -->
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Центрального Изображения</h3>
+
+        <label class="block text-md font-medium text-gray-700 mt-4 mb-2">Загрузите изображение предмета (в центре):</label>
+        <input type="file" id="backgroundImage" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-gray-50" />
+        
+        <!-- НАСТРОЙКА ФОНА КАРТОЧКИ -->
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Фона Карточки</h3>
+
+        <label for="backgroundColorInput" class="block text-md font-medium text-gray-700 mt-4 mb-2">Цвет фона:</label>
+        <input type="color" id="backgroundColorInput" class="w-full h-12 p-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="#FFFFFF" />
+
+        <label class="block text-md font-medium text-gray-700 mt-4 mb-2">Фоновое изображение (перекроет цвет):</label>
+        <input type="file" id="cardBackgroundImage" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-gray-50" />
+
+        <!-- НОВЫЙ РАЗДЕЛ: НАСТРОЙКА ЦВЕТА ШРИФТА -->
+        <h3 class="text-xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2">Настройка Цвета Шрифта</h3>
+
+        <label for="mainTextColorInput" class="block text-md font-medium text-gray-700 mt-4 mb-2">Цвет основного текста (ID, Задание, Описание, Рамки):</label>
+        <input type="color" id="mainTextColorInput" class="w-full h-12 p-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="#000000" />
+
+        <label for="footerTextColorInput" class="block text-md font-medium text-gray-700 mt-4 mb-2">Цвет текста в футере (Канал, CTA):</label>
+        <input type="color" id="footerTextColorInput" class="w-full h-12 p-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="#6B7280" />
+
+
+        <!-- КНОПКИ ДЕЙСТВИЙ -->
+        <!-- Кнопка "Скачать" занимает всю ширину -->
+        <div class="flex mt-6">
+            <button id="saveButton" class="w-full px-4 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out" disabled>
+                Скачать Изображение (.png)
+            </button>
+        </div>
+        <p id="statusMessage" class="text-sm text-center mt-4 text-red-600 hidden">Задание не может быть пустым!</p>
+    </div>
+
+    <!-- 2. КВАДРАТНАЯ КАРТОЧКА ЗАДАНИЯ (для сохранения) -->
+    <div id="cardContainer" class="w-full max-w-xl aspect-square shadow-2xl rounded-xl overflow-hidden relative">
+        <div id="creativeCard" class="w-full h-full bg-white flex flex-col p-8 box-border">
+            
+            <!-- СЕКЦИЯ 1: ВЕРХНИЙ ЗАГОЛОВОК С ЛИНИЕЙ -->
+            <div class="flex justify-between items-center pb-4 border-b border-black" id="headerSection">
+                <!-- ID Задания (слева) -->
+                <div class="text-5xl font-extrabold" id="taskIdText">(81)</div>
+                <!-- Название/Хэштег (справа, крупнее) -->
+                <div class="text-5xl font-extrabold tracking-wider" id="channelHandleText">HELOKI</div>
+            </div>
+            
+            <!-- СЕКЦИЯ 2: ЦЕНТРАЛЬНОЕ ИЗОБРАЖЕНИЕ -->
+            <div id="imagePlaceholder" class="flex-grow flex items-center justify-center p-20">
+                <p id="cardTaskText" class="text-gray-400 text-center text-lg">Загрузите свое изображение выше</p>
+            </div>
+            
+            <!-- СЕКЦИЯ 3: ТАБЛИЦА/ИНФОРМАЦИОННЫЙ БЛОК -->
+            <div class="text-sm border-t border-black" id="taskInfoBlock">
+                
+                <!-- Строка ЗАДАНИЕ -->
+                <div class="flex border-b border-black py-3 items-center" id="taskRow">
+                    <div class="w-1/4 pr-2">Задание:</div>
+                    <div class="w-3/4 text-right" id="taskDescriptionTextOutput">Придумать новое блюдо из трех ингредиентов</div>
+                </div>
+
+            </div>
+            
+            <!-- СЕКЦИЯ 4: ФУТЕР (Канал и CTA) -->
+            <div class="flex justify-between items-center pt-2 text-xs">
+                <div id="footerChannelOutput">ТГ: КРЕАТИВНАЯ КУХНЯ</div>
+                <div id="footerCTAOutput">Приготовьте что-нибудь нестандартное.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Обновленные ссылки на элементы управления
+        const taskIdInput = document.getElementById('taskIdInput');
+        const channelHandleInput = document.getElementById('channelHandle');
+        const taskDescriptionInput = document.getElementById('taskDescriptionInput');
+        const footerChannelInput = document.getElementById('footerChannelInput');
+        const footerCTAInput = document.getElementById('footerCTAInput');
+        
+        // ССЫЛКИ ДЛЯ ФОНА КАРТОЧКИ
+        const backgroundColorInput = document.getElementById('backgroundColorInput');
+        const cardBackgroundImageInput = document.getElementById('cardBackgroundImage');
+        
+        // НОВЫЕ ССЫЛКИ ДЛЯ ЦВЕТА ШРИФТА
+        const mainTextColorInput = document.getElementById('mainTextColorInput');
+        const footerTextColorInput = document.getElementById('footerTextColorInput');
+
+        const saveButton = document.getElementById('saveButton');
+        const creativeCard = document.getElementById('creativeCard');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        // ССЫЛКИ НА ЭЛЕМЕНТЫ КАРТОЧКИ (OUTPUT)
+        const taskIdText = document.getElementById('taskIdText'); 
+        const channelHandleText = document.getElementById('channelHandleText'); 
+        const taskDescriptionTextOutput = document.getElementById('taskDescriptionTextOutput');
+        const footerChannelOutput = document.getElementById('footerChannelOutput');
+        const footerCTAOutput = document.getElementById('footerCTAOutput');
+        const imagePlaceholder = document.getElementById('imagePlaceholder');
+
+        // ССЫЛКИ НА РАМКИ
+        const headerSection = document.getElementById('headerSection');
+        const taskInfoBlock = document.getElementById('taskInfoBlock');
+        const taskRow = document.getElementById('taskRow');
+        
+        // ПЕРЕМЕННЫЕ ДЛЯ ДИЗАЙНА
+        const backgroundImageInput = document.getElementById('backgroundImage');
+        let currentImageUrl = ''; // Для центрального изображения
+        let cardBackgroundImageUrl = ''; // Для фонового изображения карточки
+        
+        // Функция для применения центрального изображения
+        function applyCentralImage() {
+            // Сброс любых инлайн стилей padding, чтобы Tailwind классы p-20 работали.
+            imagePlaceholder.style.padding = '';
+
+            if (currentImageUrl) {
+                // Если есть изображение, устанавливаем его как фон для плейсхолдера.
+                // Класс p-20 в HTML теперь гарантирует большой отступ от линий.
+                imagePlaceholder.style.backgroundImage = `url(${currentImageUrl})`;
+                imagePlaceholder.style.backgroundSize = 'contain'; 
+                imagePlaceholder.style.backgroundRepeat = 'no-repeat';
+                imagePlaceholder.style.backgroundPosition = 'center';
+                imagePlaceholder.textContent = ''; // Убираем текст-заглушку
+            } else {
+                // Если изображения нет, ставим текст-заглушку.
+                imagePlaceholder.style.backgroundImage = 'none';
+                imagePlaceholder.textContent = 'Загрузите свое изображение выше';
+            }
+        }
+
+        // Функция для обновления текста и стилей на карточке (теперь вызывается на каждое "input")
+        function updateCard() {
+            const id = taskIdInput.value.trim();
+            const handle = channelHandleInput.value.trim();
+            const task = taskDescriptionInput.value.trim();
+            const footerChannel = footerChannelInput.value.trim();
+            const footerCTA = footerCTAInput.value.trim(); 
+            const bgColor = backgroundColorInput.value; 
+            
+            // Получаем цвета шрифта
+            const mainTextColor = mainTextColorInput.value; 
+            const footerTextColor = footerTextColorInput.value; 
+            
+            // 1. Обновление текста
+            taskIdText.textContent = id.length > 0 ? id : '(XX)';
+            channelHandleText.textContent = handle.length > 0 ? handle.toUpperCase() : 'BRAND NAME';
+            taskDescriptionTextOutput.textContent = task.length > 0 ? task : 'ОПИСАНИЕ ЗАДАНИЯ'; 
+            footerChannelOutput.textContent = footerChannel.length > 0 ? footerChannel : 'тг: креативная кухня'; 
+            footerCTAOutput.textContent = footerCTA.length > 0 ? footerCTA : 'Приготовьте что-нибудь нестандартное.'; 
+
+            // 2. Применение центрального изображения
+            applyCentralImage();
+
+            // 3. Настройка фона карточки: Изображение > Цвет
+            if (cardBackgroundImageUrl) {
+                creativeCard.style.backgroundImage = `url(${cardBackgroundImageUrl})`;
+                creativeCard.style.backgroundSize = 'cover';
+                creativeCard.style.backgroundPosition = 'center';
+                creativeCard.style.backgroundColor = 'transparent'; 
+            } else {
+                creativeCard.style.backgroundImage = 'none';
+                creativeCard.style.backgroundColor = bgColor;
+            }
+            
+            // 4. Настройка Цвета Шрифта и Рамок
+            
+            // Устанавливаем основной цвет текста для всей карточки (наследуется)
+            creativeCard.style.color = mainTextColor;
+            
+            // Явно устанавливаем цвет текста для описания задания (ИЗМЕНЕНИЕ ДЛЯ html2canvas)
+            taskDescriptionTextOutput.style.color = mainTextColor; 
+
+            // Обновляем цвет рамок
+            headerSection.style.borderColor = mainTextColor;
+            taskInfoBlock.style.borderColor = mainTextColor; 
+            taskRow.style.borderColor = mainTextColor;
+            
+            // Устанавливаем цвет текста футера
+            footerChannelOutput.style.color = footerTextColor;
+            footerCTAOutput.style.color = footerTextColor;
+            
+            // Цвет текста заглушки центрального изображения (если она видна)
+            imagePlaceholder.style.color = mainTextColor;
+
+
+            // 5. Управление кнопкой сохранения 
+            if (id.length === 0 && handle.length === 0 && !currentImageUrl && !cardBackgroundImageUrl) {
+                statusMessage.textContent = "Заполните хотя бы одно поле или загрузите изображение для скачивания.";
+                statusMessage.classList.remove('hidden');
+                
+                saveButton.disabled = true;
+                saveButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                saveButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+            } else {
+                statusMessage.classList.add('hidden');
+                
+                saveButton.disabled = false;
+                saveButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                saveButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            }
+        }
+
+        // Функция для скачивания изображения
+        async function downloadImage() {
+            if (saveButton.disabled) return;
+
+            saveButton.disabled = true;
+            saveButton.textContent = 'Генерация...';
+            
+            // Убеждаемся, что размеры установлены для html2canvas
+            creativeCard.style.width = '500px';
+            creativeCard.style.height = '500px';
+            
+            try {
+                const canvas = await html2canvas(creativeCard, {
+                    scale: 3, 
+                    useCORS: true,
+                    // ИЗМЕНЕНИЕ: Удален принудительный backgroundColor, чтобы корректно захватывался фон-изображение
+                    allowTaint: true
+                });
+
+                const link = document.createElement('a');
+                link.download = `minimal_task_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error("Ошибка при сохранении изображения:", error);
+                statusMessage.textContent = "Ошибка при сохранении изображения. Проверьте консоль.";
+                statusMessage.classList.remove('hidden');
+            } finally {
+                saveButton.textContent = 'Скачать Изображение (.png)';
+                creativeCard.style.width = '100%';
+                creativeCard.style.height = '100%';
+                updateCard();
+            }
+        }
+        
+        // СЛУШАТЕЛИ ДЛЯ ЦЕНТРАЛЬНОГО ИЗОБРАЖЕНИЯ
+        backgroundImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImageUrl = e.target.result;
+                    updateCard();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // СЛУШАТЕЛЬ ДЛЯ ФОНОВОГО ИЗОБРАЖЕНИЯ КАРТОЧКИ
+        cardBackgroundImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    cardBackgroundImageUrl = e.target.result;
+                    updateCard();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Инициализация при загрузке
+        window.onload = function() {
+            // Установка значений по умолчанию
+            taskIdInput.value = "(07)"; 
+            channelHandleInput.value = "ПРИВЕТ!"; 
+            taskDescriptionInput.value = "Придумать новое блюдо из трех ингредиентов";
+            footerChannelInput.value = "тг: креативная кухня";
+            footerCTAInput.value = "Приготовьте что-нибудь нестандартное.";
+            backgroundColorInput.value = "#FFFFFF"; 
+            mainTextColorInput.value = "#000000"; // Основной текст по умолчанию черный
+            footerTextColorInput.value = "#6B7280"; // Футер по умолчанию серый
+            updateCard(); 
+        };
+
+        // Слушатели событий
+        saveButton.addEventListener('click', downloadImage);
+
+        // Добавляем слушатели ко всем полям ввода, чтобы карточка обновлялась в реальном времени
+        taskIdInput.addEventListener('input', updateCard);
+        channelHandleInput.addEventListener('input', updateCard);
+        taskDescriptionInput.addEventListener('input', updateCard);
+        footerChannelInput.addEventListener('input', updateCard);
+        footerCTAInput.addEventListener('input', updateCard);
+        backgroundColorInput.addEventListener('input', updateCard); 
+        mainTextColorInput.addEventListener('input', updateCard); 
+        footerTextColorInput.addEventListener('input', updateCard); 
+        
+        // Слушатели для file input не нужны, так как они обрабатываются через 'change'
+
+    </script>
+</body>
+</html>
