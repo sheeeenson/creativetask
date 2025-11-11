@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор Заданий (Минимализм)</title>
+    <title>Генератор креативных заданий</title>
     <!-- Загрузка Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Загрузка шрифта Inter -->
@@ -31,9 +31,9 @@
     <!-- Загрузка html2canvas для сохранения изображения -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
+<body class="p-4 md:p-8 flex flex-col items-center min-h-screen"> <!-- АДАПТИВНЫЕ ОТСТУПЫ p-4 и md:p-8 -->
 
-    <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Генератор Заданий для TG (Минимализм)</h1>
+    <h1 class="text-xl md:text-3xl font-extrabold text-gray-800 mb-6 text-center">Генератор Заданий для TG (Минимализм)</h1>
 
     <!-- 1. ПАНЕЛЬ УПРАВЛЕНИЯ -->
     <div class="w-full max-w-xl bg-white p-6 rounded-xl shadow-lg mb-8">
@@ -118,10 +118,10 @@
             
             <!-- СЕКЦИЯ 1: ВЕРХНИЙ ЗАГОЛОВОК С ЛИНИЕЙ -->
             <div class="flex justify-between items-center pb-4 border-b border-black" id="headerSection">
-                <!-- ID Задания (слева) -->
-                <div class="text-5xl font-extrabold" id="taskIdText">(81)</div>
-                <!-- Название/Хэштег (справа, крупнее) -->
-                <div class="text-5xl font-extrabold tracking-wider" id="channelHandleText">HELOKI</div>
+                <!-- ID Задания (слева) - АДАПТИВНЫЙ РАЗМЕР ШРИФТА ДЛЯ PREVIEW -->
+                <div class="text-3xl sm:text-4xl lg:text-5xl font-extrabold" id="taskIdText">(81)</div>
+                <!-- Название/Хэштег (справа, крупнее) - АДАПТИВНЫЙ РАЗМЕР ШРИФТА ДЛЯ PREVIEW -->
+                <div class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wider" id="channelHandleText">HELOKI</div>
             </div>
             
             <!-- СЕКЦИЯ 2: ЦЕНТРАЛЬНОЕ ИЗОБРАЖЕНИЕ -->
